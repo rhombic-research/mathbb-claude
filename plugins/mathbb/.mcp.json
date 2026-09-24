@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mathbb": {
+      "type": "http",
+      "url": "https://mathbb.app/mcp"
+    }
+  }
+}
