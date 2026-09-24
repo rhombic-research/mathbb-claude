@@ -25,6 +25,10 @@ n = 3 case, with a figure of the roots and critical points"*. Claude finds the
 notebook, writes the page, renders the figure, and can open the result in your
 browser.
 
+It can also move files both ways: *"download the figures from my Sendov notebook
+into this folder"*, or *"add ~/Desktop/diagram.png to the notebook and put it on
+the second page"*.
+
 Claude Code asks before each MathBB tool call; allow them for good with
 `/permissions`.
 
