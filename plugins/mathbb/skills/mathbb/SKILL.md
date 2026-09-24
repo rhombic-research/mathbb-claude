@@ -14,8 +14,8 @@ the user, with exactly their permissions.
 
 - **Find the notebook first.** `list_notebooks` lists everything the user can
   open (their own folder tree, then notebooks shared with them). `get_notebook`
-  shows one notebook's pages and resources with ids — call it before working in
-  a notebook, and again if someone else may have changed it. Every notebook tool
+  shows one notebook's pages and resources — call it before working in a
+  notebook, and again if someone else may have changed it. Every notebook tool
   takes a `notebook_id`.
 - **Name things, never number them.** Tool results carry ids (`[1234]`,
   `[folder id=7]`) because the tools need them — but users never see ids
@@ -30,26 +30,11 @@ the user, with exactly their permissions.
   user will want to look at — a new notebook, a page you wrote, a figure — open
   it: `open <url>` on macOS, `xdg-open <url>` on Linux, `start <url>` on Windows.
   Don't open a tab for every small edit.
-- **Figures** — `generate_figure`: you write a matplotlib script (ending in
-  `plt.show()`; the server saves the figure itself). A preview image comes back:
-  look at it and fix problems before moving on. **3D models** —
-  `generate_3d_model`: a Blender scene script that builds the scene and does not
-  export or render. **Widgets** — `create_widget`: sandboxed interactive
-  JavaScript. Then embed the resource in a page with
-  `![alt text;size=WIDTHxHEIGHT](filename)` and an italicized caption line below it.
 - **Files between the user's machine and MathBB**: `download_resource` and
   `upload_resource` return a short-lived link and a `curl` command — run it
   yourself (with the local path, for an upload). Use them when the user asks to
   download or add a file; to just read a text file, `read_resource_text` is
   enough.
-- **Changing a figure or 3D model**: `read_resource_text` on its filename shows
-  the code; `edit_resource_text` with `old_string`/`new_string` edits it and
-  re-renders it in place (every page embedding it updates).
-- **Computing**: `execute_code` runs Python, C or C++ in MathBB's sandbox, in the
-  same workspace the figure renderer uses — so a figure can plot data a run saved
-  to a file. `lean_check` checks Lean 4 (with Mathlib) — a `.lean` resource or
-  inline code. You also have the user's own machine; use MathBB's sandbox when
-  the result feeds the notebook.
 - **What you can't do here**: delete a notebook, share one (public links,
   collaborators, course shares) or change the account. Those are done in the
   browser — tell the user rather than working around it. On a notebook the user
@@ -58,9 +43,15 @@ the user, with exactly their permissions.
 - Claude Code asks before each MathBB tool call; the user can allow them for good
   with `/permissions`.
 
-## Page syntax
+## Guides in this skill — read the one you need first
 
-The same conventions MathBB's own assistant follows:
+- [widgets.md](widgets.md) — before writing or changing a widget (`create_widget`).
+- [computing.md](computing.md) — before running code (`execute_code`).
+- [files-and-folders.md](files-and-folders.md) — text files and organizing
+  pages and resources into folders.
+- [github.md](github.md) — before using the GitHub backup tools.
+
+## Page syntax
 
 - Use $...$ for inline math and $$...$$ for display math. Do not emit
   \(...\) or \[...\] yourself — the renderer accepts them (e.g. in content
@@ -87,7 +78,7 @@ The same conventions MathBB's own assistant follows:
   title="..." attribute is optional, as is the \label — add one only when
   the result is referenced, then cite it with \ref{thm:euler} → "2.1". These
   render as styled blocks live and become real amsthm environments in the
-  LaTeX manuscript export. Use them only in pages.
+  LaTeX manuscript export. Do NOT use them in chat replies — only in pages.
 - CROSS-REFERENCES: \label{key} is the ONE way to mark a link destination, and
   it attaches to whatever encloses it, exactly as in LaTeX — the equation, the
   theorem block, the heading it sits on, or failing all three, that spot in
@@ -105,7 +96,7 @@ The same conventions MathBB's own assistant follows:
   and \ref/\eqref inside a sentence that names the object ("by Theorem
   \ref{thm:euler}"). Never invent a label you did not define — an unresolved
   reference renders as a red (??). A page link must match a real page title
-  exactly; check the page list from get_notebook before writing one.
+  exactly; check the notebook snapshot's page list before writing one.
 - LEAN FORMALIZATION: a theorem-like div takes lean="file.lean", naming a .lean
   resource — ::: {.theorem lean="gauss_statement.lean"} — and the block
   then shows a "Lean" button that swaps the written text for the file. Put the
@@ -222,3 +213,22 @@ The same conventions MathBB's own assistant follows:
   show literal math syntax as code when explaining it.
 - Use standard LaTeX commands supported by KaTeX.
 - Use **bold** and *italic* for text formatting.
+
+## Figures, 3D models, SVGs and widgets
+
+- When asked to create a figure/plot/diagram, use generate_figure: you write the matplotlib script yourself, it runs in the code sandbox, and the rendered image comes back to you — look at it and fix what's wrong before moving on. The code is kept with the figure, so the user can read and reuse it; write it to be clear.
+- To change an existing figure or 3D model, read its code with read_resource_text, then edit it with edit_resource_text (old_string/new_string on the figure's or model's filename) — that re-renders it in place, and every page embedding it updates. For a rewrite, call generate_figure / generate_3d_model with the same filename and replace=true. Never make a second copy.
+- When asked to create a 3D model, use generate_3d_model: you write the Blender scene script yourself (no export, no render — the server does both), and a preview render comes back to you to check. Its code is kept with the model, like a figure's.
+- When asked for an editable SVG, use insert_inline_svg.
+- When asked for an SVG resource file, use create_svg_resource.
+- If unsure whether to use a figure or SVG, prefer generate_figure.
+- When asked for an interactive animation, simulation, demo, or game, use create_widget.
+
+ACCESSIBILITY RULES (apply to every figure, SVG, 3D model, and widget you generate):
+- Always provide a short alt_text (no more than 20 words) that concisely describes the asset for screen-reader users. This goes into the markdown image's alt attribute.
+- Always provide a plain-text caption that names or describes the asset for readers.
+- When you insert an asset into a page (via create_page / edit_page following generate_figure/generate_3d_model/create_svg_resource/create_widget, or via insert_inline_svg), the page markdown MUST include the caption as visible text alongside the asset — typically as an italicized line immediately below the image, e.g.:
+  ![alt_text](filename.pdf)
+  *caption goes here*
+  For insert_inline_svg, use ![alt_text;svg-inline](<svg>...</svg>) and put the caption as a visible italicized line beside/below it in new_content.
+- When an asset is generated but not inserted into a page, still supply a caption; do not embed it inside the asset file itself.
