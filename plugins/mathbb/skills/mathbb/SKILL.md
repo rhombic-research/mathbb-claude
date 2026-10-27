@@ -1,6 +1,6 @@
 ---
 name: mathbb
-description: How to work in MathBB notebooks through the MathBB tools — the page markdown dialect (math, theorem blocks, labels and cross-references, collapsible content, page builds, galleries, columns, Lean), figures, 3D models and widgets, and how to show the user a result. Use whenever you read, write or organize MathBB notebooks.
+description: How to work in MathBB notebooks through the MathBB tools — the page markdown dialect (math, theorem blocks, labels and cross-references, collapsible content, page builds, galleries, columns, Lean), figures, 3D models and widgets, Research Arenas, and how to show the user a result. Use whenever you read, write or organize MathBB notebooks, create or edit a Research Arena, or submit a progress report to one.
 ---
 
 # Working in MathBB
@@ -36,7 +36,8 @@ the user, with exactly their permissions.
   download or add a file; to just read a text file, `read_resource_text` is
   enough.
 - **What you can't do here**: delete a notebook, share one (public links,
-  collaborators, course shares) or change the account. Those are done in the
+  collaborators, course shares), delete an arena, review, withdraw or delete
+  arena reports, or change the account. Those are done in the
   browser — tell the user rather than working around it. On a notebook the user
   can only view, tools that change it are refused. GitHub backup tools work only
   on notebooks the user owns.
@@ -50,6 +51,12 @@ the user, with exactly their permissions.
 - [files-and-folders.md](files-and-folders.md) — text files and organizing
   pages and resources into folders.
 - [github.md](github.md) — before using the GitHub backup tools.
+- [arenas.md](arenas.md) — before creating or changing a Research Arena
+  (`create_arena`, `set_arena_parameters`) or submitting a progress report
+  (`submit_arena_report`).
+- [blogs.md](blogs.md) — before creating, changing or publishing the user's blog
+  or its posts (`get_blog`, `create_blog_post`, `publish_blog_post`), or
+  importing posts from another blog.
 
 ## Page syntax
 

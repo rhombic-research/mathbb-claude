@@ -7,7 +7,7 @@
     {
       "name": "mathbb",
       "source": "./plugins/mathbb",
-      "description": "Work on your MathBB notebooks from Claude Code: write and edit math-rich pages, render figures and 3D models, build interactive widgets, run code and check Lean proofs in MathBB's sandboxes."
+      "description": "Work on your MathBB notebooks from Claude Code: write and edit math-rich pages, render figures and 3D models, build interactive widgets, run code and check Lean proofs in MathBB's sandboxes, write and publish blog posts, create and edit Research Arenas, and submit progress reports to them."
     }
   ]
 }
